@@ -4,12 +4,12 @@ checkpoints/
 outputs/
 render/
 
-# --- dino_feats_extraction: ship README + extractor only ---
-# Vendored dinov3/, notebooks, nested clone, etc. stay local.
-dino_feats_extraction/**
-!dino_feats_extraction/
-!dino_feats_extraction/README.md
-!dino_feats_extraction/specialized_feature_extractor.py
+# # --- dino_feats_extraction: ship README + extractor only ---
+# # Vendored dinov3/, notebooks, nested clone, etc. stay local.
+# dino_feats_extraction/**
+# !dino_feats_extraction/
+# !dino_feats_extraction/README.md
+# !dino_feats_extraction/specialized_feature_extractor.py
 
 # --- Python ---
 __pycache__/
