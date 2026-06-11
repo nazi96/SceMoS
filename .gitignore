@@ -1,0 +1,53 @@
+# --- Local data and trained weights (not in repo) ---
+data/
+checkpoints/
+outputs/
+render/
+
+# --- dino_feats_extraction: ship README + extractor only ---
+# Vendored dinov3/, notebooks, nested clone, etc. stay local.
+dino_feats_extraction/**
+!dino_feats_extraction/
+!dino_feats_extraction/README.md
+!dino_feats_extraction/specialized_feature_extractor.py
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# --- Environments ---
+.venv/
+venv/
+env/
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# --- Logs and run artifacts ---
+*.log
+tensorboard_logs/
+tenserboard_logs/
+imgui.ini
+
+# --- Large / downloaded assets (keep paths local) ---
+models/smplx/
+body_models/
+pretrained_weights/
+*.pth
+*.pkl
+
+# --- Jupyter ---
+.ipynb_checkpoints/
