@@ -1,0 +1,9 @@
+{
+  "metrics": [
+    "fid"
+  ],
+  "eval_source": "pkl",
+  "pkl_root": "outputs/scemos_infer_evalpkls/validation",
+  "num_samples": 399,
+  "FID": 0.30203971366106686
+}

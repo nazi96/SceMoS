@@ -48,6 +48,8 @@ body_models/
 pretrained_weights/
 *.pth
 *.pkl
+*.zip
+SceMoS_checkpoints.zip
 
 # --- Jupyter ---
 .ipynb_checkpoints/

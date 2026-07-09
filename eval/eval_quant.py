@@ -76,7 +76,7 @@ from eval.metrics import (
 ALL_METRICS = ('fid', 'div', 'pfc', 'contact', 'penetration')
 
 # Default PKL eval: retrieval FID/Div on inference validation PKLs.
-DEFAULT_METRICS = ('fid', 'penetration')
+DEFAULT_METRICS = ('fid', 'div')
 DEFAULT_PKL_ROOT = os.path.join('outputs', 'scemos_infer_evalpkls', 'validation')
 DEFAULT_RETRIEVAL_WEIGHTS = os.path.join(
     'checkpoints', 'trumans', 'retrieval_encoder', 'retrieval_encoder.pt',
