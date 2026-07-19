@@ -43,6 +43,8 @@ Clone this repository and run all commands from the **repository root** (`Scemos
 
 1. Request and download the TRUMANS dataset from the official [Google Drive form](https://docs.google.com/forms/d/e/1FAIpQLSdF62BQ9TQTSTW0HzyNeRPhlzmREL5T8hUGn-484W1I3eVihQ/viewform?usp=sf_link) (see [trumans_utils](https://github.com/jnnan/trumans_utils)).
 2. Unzip the release so that the `Data_release` folder contains motion arrays (`.npy`), `Actions/`, `Scene/`, `Scene_data/`, `Object_chairs/`, etc.
+3. We save the vertices of the scenes and the objects using a standard mesh to vertex generation function. We save these as `Scene_data/main/*_vertices.npy` and `Object_chairs/Obj_data/main/*_vertices.npy`.
+4. Download the BEV images from [here](https://edmond.mpg.de/file.xhtml?fileId=345209&version=2.0) and put them under `Recordings/BEV_1/`. 
 
 ### Set paths
 
