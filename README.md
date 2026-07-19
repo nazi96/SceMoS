@@ -19,7 +19,7 @@ You also need:
 
 * **SMPL-X** body models (register at [SMPL-X](https://smpl-x.is.tue.mpg.de/)); paths are set in `dataset_prep/trumans_paths.py`
 * **TRUMANS** [Code / Dataset](https://github.com/jnnan/trumans_utils)
-* **BEV images of TRUMANS scenes** [BEV images](https://edmond.mpg.de/dataset.xhtml?persistentId=doi:10.17617/3.YOT07D)
+* **[BEV images](https://edmond.mpg.de/file.xhtml?fileId=345209&version=2.0) of TRUMANS scenes**
 * **DINOv2 or DINOv3** for BEV scene features — see [`dino_feats_extraction/README.md`](dino_feats_extraction/README.md)
 
 ---
