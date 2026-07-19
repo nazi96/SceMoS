@@ -227,7 +227,7 @@ Scemos/
 ```
 
 ---
-## Pretrained Checkpoints [Download](https://edmond.mpg.de/file.xhtml?fileId=345210&version=2.0)
+ Pretrained Checkpoints: [Download](https://edmond.mpg.de/file.xhtml?fileId=345210&version=2.0)
 ## Citation
 
 ```bibtex
