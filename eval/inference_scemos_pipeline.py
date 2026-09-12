@@ -1,4 +1,9 @@
 from __future__ import annotations
+"""End-to-end SceMoS inference entrypoint (AR + VQ + optional refinement).
+
+This script wires checkpoint loading, dataset iteration, motion decoding, and
+optional PKL export for visualization/evaluation.
+"""
 
 import argparse
 import json
@@ -40,6 +45,7 @@ from utils.utilities import fixseed, freeze_model, get_opt, makepath
 
 
 def collate_with_var_lengths(batch, var_keys=("scene_vertex",)):
+    """Collate dict batches while keeping variable-length keys as Python lists."""
     if not isinstance(batch[0], dict):
         return default_collate(batch)
     out: Dict[str, Any] = {}
@@ -492,6 +498,7 @@ def parse_args():
 
 
 def main():
+    """Run the configured inference mode over the selected dataset split."""
     args = parse_args()
     fixseed(args.seed)
     device = torch.device(
@@ -505,6 +512,7 @@ def main():
         print(f"  refinement_weights: {os.path.abspath(args.refinement_weights)}")
     print(f"  device: {device}")
 
+    # Stage 1: load trained components.
     vq_model, _ = load_vq(args.vq_weights, device)
     ar_model = None
     if args.mode == "ar":
@@ -516,6 +524,7 @@ def main():
     if args.refinement_weights:
         refinement = load_refinement(args.refinement_weights, device, args.gpu_id)
 
+    # Stage 2: build dataset/loader and normalization helpers.
     dataset = TrumansDataset(
         phase=args.phase,
         window_size=args.window_size,
@@ -546,6 +555,7 @@ def main():
 
     os.makedirs(args.output_dir, exist_ok=True)
 
+    # Stage 3: decode each batch and optionally save visualization artifacts.
     for batch in tqdm(loader, desc="infer", ncols=120):
         pred = pipeline_to_motion(
             batch,

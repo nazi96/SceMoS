@@ -1,3 +1,8 @@
+"""Train or evaluate the AR token generator used after VQ-VAE pretraining.
+
+The model predicts motion codebook tokens from scene (DINO) and text context.
+"""
+
 import os
 import numpy as np
 import pickle
@@ -45,6 +50,7 @@ vq_pretrained_weight_path = os.path.join('checkpoints', 'trumans', 'exp_11_VQVAE
 
 
 def dataset_prepare(opt):
+    """Build train/test dataloaders with DINO conditioning enabled."""
     train_dataset = TrumansDataset(phase='train', window_size=opt.window_size, predict_velocity=opt.predict_velocity,
                                      downsample_rate=opt.downsample_rate, device=opt.device, load_dino_feats=True)
     test_dataset = TrumansDataset(phase='test', window_size=opt.window_size, predict_velocity=opt.predict_velocity,
@@ -67,6 +73,7 @@ def large_value():
 
 
 class TransformerTrainer:
+    """Wraps pretrained VQ tokenization and autoregressive transformer training."""
     def __init__(self, args):
         self.opt = args
         if torch.cuda.is_available() and torch.cuda.device_count() > 0:
@@ -144,6 +151,7 @@ class TransformerTrainer:
             self.inv_z_normalization = self.data_loader.dataset.inv_z_normalization
 
     def load_vq_model(self, vq_pretrained_weight_path):
+        """Load frozen VQ-VAE used to convert motions into token IDs."""
         opt_path = os.path.join(os.path.dirname(os.path.dirname(vq_pretrained_weight_path)), 'opt.txt')
         vq_opt = get_opt(opt_path)
         vq_opt.gpu_id = self.opt.gpu_id
@@ -213,11 +221,12 @@ class TransformerTrainer:
         return checkpoint['ep'], checkpoint['total_it']
 
     def forward(self, batch_data, iterations):
- 
+        """Tokenize motions with VQ-VAE and train AR model with teacher forcing."""
         input_motion = batch_data['normalized_mot_feats'].to(self.device)
         text_prompts = batch_data['texts']
         action_labels = batch_data['action_label'].to(self.device)
         dino_features_patches = batch_data['dino_feats'].to(self.device).squeeze(1)
+        # Motion tokens become the supervision target for autoregressive decoding.
         motion_tokens = self.vq_model.motion_encode(input_motion)
         batch_size, seq_len = motion_tokens.shape[:2]
 
@@ -266,6 +275,7 @@ class TransformerTrainer:
 
    
     def train_epoch(self, train_loader, epoch, it):
+        """Run one optimization epoch and report mean loss/accuracy."""
         self.model.train()
         self.vq_model.eval()
         train_logs = defaultdict(def_value, OrderedDict())
@@ -316,6 +326,7 @@ class TransformerTrainer:
 
     
     def val_epoch(self, val_loader, epoch, it):
+        """Evaluate the AR model on held-out batches."""
         self.model.eval()
         self.vq_model.eval()
         val_logs = defaultdict(def_value, OrderedDict())
@@ -370,6 +381,7 @@ class TransformerTrainer:
                         #    person2=[pred_vertices, pred_faces])
 
     def train(self):
+        """Main epoch loop: train, validate, log, and checkpoint."""
         self.model.to(self.device)
         total_iters = self.opt.num_epoch * len(self.train_loader)
         print('Total Epochs: {}, Total Iters: {}'.format(self.opt.num_epoch, total_iters))

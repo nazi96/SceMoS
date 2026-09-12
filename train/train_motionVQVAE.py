@@ -1,3 +1,9 @@
+"""Train or evaluate the geometry-conditioned VQ-VAE used by SceMoS.
+
+This script is the first stage of the pipeline: it learns a tokenizable motion
+representation conditioned on causal heightmap/contact cues.
+"""
+
 import os
 # os.environ['CUDA_LAUNCH_BLOCKING']="1"
 # os.environ['TORCH_USE_CUDA_DSA'] = "1"
@@ -39,6 +45,7 @@ load_exp = os.path.join('checkpoints', 'trumans', 'exp_11_VQVAE_decoder_heightma
 
 
 def dataset_prepare(opt):
+    """Build train/validation dataloaders for the VQ-VAE stage."""
     train_dataset = TrumansDataset(phase='train', window_size=opt.window_size, predict_velocity=opt.predict_velocity,
                                      downsample_rate=opt.downsample_rate, device=opt.device)
     val_dataset = TrumansDataset(phase='test', window_size=opt.window_size, predict_velocity=opt.predict_velocity,
@@ -59,6 +66,7 @@ def large_value():
 
 
 class VQTokenizerTrainer:
+    """Owns model setup, optimization loop, and optional visualization exports."""
     def __init__(self, args):
         self.opt = args
         if torch.cuda.is_available() and torch.cuda.device_count() > 0:
@@ -192,16 +200,18 @@ class VQTokenizerTrainer:
         return checkpoint['ep'], checkpoint['total_it']
 
     def forward(self, batch_data, iterations):
-       
+        """Run one VQ-VAE pass and compute reconstruction/velocity/token losses."""
+        # Build causal geometry conditions used by the decoder at each step.
         heightmap = batch_data['heightmap'][:, ::4].to(self.device)
         heightmap_cond = torch.cat((heightmap[:, 0:1], heightmap[:, :-1]), dim=1)
         contact_maps = batch_data['contact_map'][:, ::4].to(self.device)
         contact_maps_cond = torch.cat((contact_maps[:, 0:1], contact_maps[:, :-1]), dim=1)
         input_motion = batch_data['normalized_mot_feats'].to(self.device)
+        # Decode motion deltas from quantized latent tokens.
         pred_motion_normalized_delta, loss_commit, perplexity, code_idx = self.vq_model(input_motion, heightmap_cond, contact_maps_cond)
         
 
-        # if self.opt.predict_velocity:
+        # Integrate predicted deltas and map back to original feature scale.
         pred_motion_normalized = delta_mot2mot_feats(batch_data['mot_init'].to(self.device), pred_motion_normalized_delta.to(self.device))
         pred_motion = self.inv_z_normalization(pred_motion_normalized.to(self.device))
         gt_motion = batch_data['motion_features'].to(self.device)
@@ -223,6 +233,7 @@ class VQTokenizerTrainer:
         
         
         # loss_fk = torch.tensor(0.0).float().to(self.device)
+        # Total loss = feature-wise recon + velocity consistency + commitment.
         loss_model = 0.1 * self.rec_loss_list[-1](pred_motion_normalized_delta, input_motion)
         for i_loss in loss_rec_:
             loss_model += i_loss
@@ -253,6 +264,7 @@ class VQTokenizerTrainer:
         return train_logs
 
     def train_epoch(self, train_loader, epoch, it):
+        """Train the VQ-VAE for one epoch and return aggregated logs."""
         self.vq_model.train()
         train_logs = defaultdict(def_value, OrderedDict())
         mean_loss = defaultdict(def_value, OrderedDict())
@@ -285,6 +297,7 @@ class VQTokenizerTrainer:
 
     
     def val_epoch(self, val_loader, epoch, it):
+        """Evaluate one epoch on the validation split without weight updates."""
         self.vq_model.eval()
         val_logs = defaultdict(def_value, OrderedDict())
         mean_loss = defaultdict(def_value, OrderedDict())
@@ -334,6 +347,7 @@ class VQTokenizerTrainer:
                         #    person2=[pred_vertices, pred_faces])
 
     def train(self):
+        """Full multi-epoch optimization loop with periodic eval/checkpointing."""
         self.vq_model.to(self.device)
         total_iters = self.opt.num_epoch * len(self.train_loader)
         print('Total Epochs: {}, Total Iters: {}'.format(self.opt.num_epoch, total_iters))
@@ -405,6 +419,7 @@ class VQTokenizerTrainer:
 
 
     def test(self): 
+        """Run inference on the configured split and dump visualization PKLs."""
         self.vq_model.eval()
         val_tqdm = tqdm(self.data_loader, desc='val' + ' {:.10f}'.format(0), leave=False, ncols=120)
         for running_iter, batch_data in enumerate(val_tqdm):
