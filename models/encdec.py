@@ -1,3 +1,5 @@
+"""Temporal encoder/decoder building blocks used by VQ and refinement models."""
+
 import torch.nn as nn
 from models.resnet import Resnet1D
 

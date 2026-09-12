@@ -1,3 +1,5 @@
+"""SMPL-X helper routines for joints, vertices, and parameter handling."""
+
 from typing import List, Tuple
 import os
 import numpy as np

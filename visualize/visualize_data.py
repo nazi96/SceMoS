@@ -1,3 +1,5 @@
+"""Visualize generated and ground-truth motion/scene PKL artifacts."""
+
 
 # import ffmpeg
 import glob

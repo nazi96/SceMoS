@@ -1,3 +1,5 @@
+"""Compute dataset-wide normalization statistics for motion features."""
+
 import glob
 import numpy as np
 import os

@@ -1,3 +1,5 @@
+"""Rotation conversion helpers (matrix/quaternion/axis-angle/6D)."""
+
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # All rights reserved.
 #

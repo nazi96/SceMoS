@@ -1,3 +1,5 @@
+"""Preprocess raw TRUMANS sequences into training-ready pickle samples."""
+
 import argparse
 import glob
 import re

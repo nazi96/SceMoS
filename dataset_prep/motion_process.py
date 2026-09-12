@@ -1,3 +1,5 @@
+"""Motion feature conversion utilities between raw and model-friendly formats."""
+
 from os.path import join as pjoin
 
 from common.skeleton import Skeleton

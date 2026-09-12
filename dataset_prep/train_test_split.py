@@ -1,3 +1,5 @@
+"""Create deterministic train/test sample lists and scene partitions."""
+
 import glob
 import numpy as np
 import os

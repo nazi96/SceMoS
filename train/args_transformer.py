@@ -1,3 +1,5 @@
+"""Command-line argument definitions for AR transformer training."""
+
 import argparse
 import json
 import os

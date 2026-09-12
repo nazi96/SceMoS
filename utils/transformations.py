@@ -1,3 +1,5 @@
+"""Geometry and transformation utilities used during preprocessing/training."""
+
 
 # -*- coding: utf-8 -*-
 #

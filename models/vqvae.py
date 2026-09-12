@@ -1,3 +1,5 @@
+"""VQ-VAE and trajectory refinement model definitions for SceMoS."""
+
 from typing import List, Optional, Union
 import torch
 import torch.nn as nn

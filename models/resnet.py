@@ -1,3 +1,5 @@
+"""Residual temporal convolution blocks used in model backbones."""
+
 import torch.nn as nn
 import torch
 

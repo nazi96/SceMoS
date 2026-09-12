@@ -1,3 +1,5 @@
+"""Skeleton utilities for forward/inverse kinematics and joint processing."""
+
 from common.quaternion import *
 import scipy.ndimage.filters as filters
 

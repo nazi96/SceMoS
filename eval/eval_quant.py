@@ -1,3 +1,5 @@
+"""Evaluate generated motions with SceMoS quantitative metrics."""
+
 from __future__ import annotations
 
 import argparse

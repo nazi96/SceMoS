@@ -1,3 +1,5 @@
+"""General training/runtime utility helpers (paths, logs, seeding, configs)."""
+
 # import cv2
 import argparse
 import io
